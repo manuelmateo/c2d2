@@ -124,10 +124,16 @@ std::ostream& operator<<(std::ostream& os, const Snippet& ci) {
 
 std::ostream& operator<<(std::ostream& os, const CodeCloneInfo& ci) {
 	for (const auto& [key, val] : ci.clones) {
+
+		if (val.size() == 0) {
+			continue;
+		}
+
 		auto current_snippet = ci.snippets[key];
+
 		os << "snippet in file " << current_snippet.filepath << " ("
 		   << current_snippet.start_range << "," << current_snippet.end_range
-		   << ") has " << val.size() << " clones:\n";
+		   << ") has " << val.size() << " clone(s):\n";
 
 		for (auto& c : val) {
 			os << '\t' << c.filepath << " (" << c.start_range << ','

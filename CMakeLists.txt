@@ -9,4 +9,4 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 
-add_executable(dedup src/main.cpp src/src/SimilarityDetect.cpp src/src/Snippets.cpp)
+add_executable(c2d2 src/main.cpp src/src/SimilarityDetect.cpp src/src/Snippets.cpp src/src/Normalize.cpp src/src/Detector.cpp)

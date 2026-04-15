@@ -47,7 +47,9 @@ SimilarityDetect::operator()(const std::vector<Snippet>& snippets) {
 				current_clones.push_back(snippets[j]);
 			}
 		}
-		clones.clones[i] = current_clones;
+		if (current_clones.size() > 0) {
+			clones.clones[i] = current_clones;
+		}
 	}
 	return clones;
 }

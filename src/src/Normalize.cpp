@@ -1,62 +1,73 @@
 #include "../include/Normalize.hpp"
+#include "../include/Parser.hpp"
+#include "../include/Snippets.hpp"
 
 #include <istream>
 #include <sstream>
+#include <string>
+#include <vector>
 
 std::string removeCommentsHeaders(const std::string& line) {
-    std::string result;
-    int i = 0;
+	std::string result;
+	int i = 0;
 
-    while (i < line.size()) {
-        //For single-line comments
-        if(i + 1 < line.size() && line[i] == '/' && line[i+1] == '/')
-            break;
-        else if( i + 1 < line.size() && line[i] == '#')
-            break;
-        result += line[i];
-        i++;
-        
-    }
+	while (i < line.size()) {
+		// For single-line comments
+		if (i + 1 < line.size() && line[i] == '/' && line[i + 1] == '/')
+			break;
+		else if (i + 1 < line.size() && line[i] == '#')
+			break;
+		result += line[i];
+		i++;
+	}
 
-    return result;
+	return result;
 }
 
-std::vector<std::string> normalize(std::istream& in)
-{
-    std::vector<std::string> words;
-    std::string line;
-    bool blockComment = false;
+std::vector<Function> normalize(const std::vector<Snippet>& snippets) {
+	std::vector<Function> funcs;
+	bool blockComment = false;
 
-    while(std::getline(in, line)) {
-        std::string cleaned;
-        int i = 0;
+	for (const auto& s : snippets) {
+		std::vector<std::string> words;
+		for (auto line : s.get_snippet()) {
+			std::string cleaned;
+			int i = 0;
 
-        while(i < line.size()) {
-            //Checks if the current line starts with /* or ends with */
-            if (blockComment == false && i + 1 < line.size() && line[i] == '/' && line[i+1] == '*') {
-                blockComment = true;
-                i += 2; // + 2 to skip past the '/' and '*'
-            } else if (blockComment && i + 1 < line.size() && line[i] == '*' && line[i+1] == '/') {
-                blockComment = false;
-                i += 2;
-            } else {
-                if (!blockComment) {
-                    cleaned += line[i];
-                }
-                i++;
-            }
-        }
+			while (i < line.size()) {
+				// Checks if the current line starts with /* or ends with */
+				if (blockComment == false && i + 1 < line.size() &&
+					line[i] == '/' && line[i + 1] == '*') {
+					blockComment = true;
+					i += 2; // + 2 to skip past the '/' and '*'
+				} else if (blockComment && i + 1 < line.size() &&
+						   line[i] == '*' && line[i + 1] == '/') {
+					blockComment = false;
+					i += 2;
+				} else {
+					if (!blockComment) {
+						cleaned += line[i];
+					}
+					i++;
+				}
+			}
 
-        cleaned = removeCommentsHeaders(cleaned); //Remove the single line comments
+			// Remove the single line comments
+			cleaned = removeCommentsHeaders(cleaned);
 
-        std::istringstream stream(cleaned);
-        std::string word;
+			std::istringstream stream(cleaned);
+			std::string word;
 
-        //Returns a vector with removed whitespace
-        while (stream >> word) {
-            words.push_back(word);
-        }
-    }
+			// Returns a vector with removed whitespace
+			while (stream >> word) {
+				words.push_back(word);
+			}
+		}
+		funcs.push_back({.name = s.filepath + "[" +
+								 std::to_string(s.start_range) + "," +
+								 std::to_string(s.end_range) + "]",
+						 .tokens = words});
+	}
 
-    return words;
+	return funcs;
 }

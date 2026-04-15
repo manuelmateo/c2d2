@@ -2,12 +2,10 @@
 
 #include "../include/Snippets.hpp"
 
-#include <utility>
 #include <vector>
 
-std::pair<std::vector<Function>, std::vector<Snippet>>
-parse_functions(const std::string& filename,
-				const std::vector<std::string>& tokens) {
+std::vector<Function> parse_functions(const std::string& filename,
+									  const std::vector<std::string>& tokens) {
 	std::vector<Function> functions;
 	std::vector<Snippet> snippets;
 	Snippet current_snippet(filename, -1, -1);
@@ -57,5 +55,5 @@ parse_functions(const std::string& filename,
 		}
 	}
 
-	return std::make_pair(functions, snippets);
+	return functions;
 }

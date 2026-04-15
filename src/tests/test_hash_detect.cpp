@@ -1,10 +1,9 @@
 #include <fstream>
 #include <iostream>
-#include <vector>
 
 #include "../include/Detector.hpp"
 #include "../include/Normalize.hpp"
-#include "../include/Parser.hpp"
+#include "../include/Snippets.hpp"
 
 int main(int argc, char* argv[]) {
 	if (argc < 2) {
@@ -19,16 +18,20 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	// Step 1: normalize the file
-	std::vector<std::string> tokens1 = normalize(file1);
+	// step 0: get snippets from file
+	auto snippets = detect_method_snippets(argv[1]);
 
-	// Step 2: parse functions
-	auto funcs1 = parse_functions(argv[1], tokens1);
+	// Step 1: normalize the snippets + convert to function objects
+	auto tokens1 = normalize(snippets);
+
+	std::cout << "num funcs: " << tokens1.size() << '\n';
 
 	// Step 3: detect clones within the same file
-	int count = detectType1Clones(funcs1.first);
+	auto ci = detectType1Clones(tokens1, snippets);
 
-	std::cout << "Total amount of Type-1 Clones found: " << count << std::endl;
+	std::cout << "Total amount of Type-1 Clones found: " << ci.clones.size()
+			  << std::endl;
+	std::cout << ci << '\n';
 
 	return 0;
 }

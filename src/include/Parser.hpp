@@ -9,6 +9,5 @@ struct Function {
 	std::vector<std::string> tokens;
 };
 
-std::pair<std::vector<Function>, std::vector<Snippet>>
-parse_functions(const std::string& filename,
-				const std::vector<std::string>& tokens);
+std::vector<Function> parse_functions(const std::string& filename,
+									  const std::vector<std::string>& tokens);
