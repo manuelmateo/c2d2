@@ -13,20 +13,21 @@
 #include <vector>
 
 std::vector<Snippet> detect_method_snippets(std::string_view file_dir) {
-	// Source - https://stackoverflow.com/a/847507
-	// Posted by Georgios Gousios
-	// Retrieved 2026-04-14, License - CC BY-SA 2.5
-
 	try {
+		// Source - https://stackoverflow.com/a/847507
+		// Posted by Georgios Gousios
+		// Retrieved 2026-04-14, License - CC BY-SA 2.5
 		const auto r = std::regex(
-			R"(public|protected|private|static|\s) +[\w\<\>\[\]]+\s+(\w+) *\([^\)]*\) *(\{?|[^;])");
+			"(public|protected|private|static|\\s) "
+			"+[\\w\\<\\>\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
 
 	} catch (const std::regex_error& e) {
-		std::cout << "couldn't make regex!\n";
+		std::cout << "couldn't make regex!" << e.what() << '\n';
 		assert(false);
 	}
 
 	for (const auto& ent : std::filesystem::directory_iterator(file_dir)) {
+		ent.is_directory();
 		std::cout << ent.path() << '\n';
 	}
 
