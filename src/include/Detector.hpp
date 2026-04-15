@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Parser.hpp"
-#include "SimilarityDetect.hpp"
 #include "Snippets.hpp"
 
 #include <string>
