@@ -237,7 +237,7 @@ public class Example extends ProgrammingAssignment implements Runnable {
     }
 
 
-    private connectionPool;
+    private connectionPool connectionPool;
 
     public void initialize(){
         Connection each = SSLSocket;
