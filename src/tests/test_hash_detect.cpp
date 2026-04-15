@@ -1,9 +1,16 @@
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 #include "../include/Detector.hpp"
 #include "../include/Normalize.hpp"
 #include "../include/Parser.hpp"
+
+template <typename T> void print_vec(const std::vector<T> v) {
+	for (auto& item : v) {
+		std::cout << item << '\n';
+	}
+}
 
 int main(int argc, char* argv[]) {
 	if (argc < 3) {
@@ -23,13 +30,22 @@ int main(int argc, char* argv[]) {
 	std::vector<std::string> tokens1 = normalize(file1);
 	std::vector<std::string> tokens2 = normalize(file2);
 
+	print_vec(tokens1);
+
 	// Step 2: parse functions
-	std::vector<Function> funcs1 = parse_functions(tokens1);
-	std::vector<Function> funcs2 = parse_functions(tokens2);
+	auto funcs1 = parse_functions(argv[1], tokens1);
+	auto funcs2 = parse_functions(argv[2], tokens2);
+
+	std::cout << funcs1.second.size() << '\n';
+	std::cout << funcs1.second[1].start_range << ":"
+			  << funcs1.second[1].end_range << '\n';
+
+	std::cout << funcs1.first[0].name << '\n';
+	std::cout << funcs1.first[1].name << '\n';
 
 	// Step 3: detect clones
 	int count;
-	count = detectType1Clones(funcs1, funcs2);
+	count = detectType1Clones(funcs1.first, funcs2.first);
 	std::cout << "Total amount of Type-1 Clones found: " << count << std::endl;
 	return 0;
 }
