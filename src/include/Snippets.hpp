@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstddef>
 #include <iostream>
+#include <ostream>
 #include <string>
 #include <string_view>
 #include <unordered_map>
