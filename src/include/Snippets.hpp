@@ -28,6 +28,8 @@ struct Snippet {
 	 * returns: the snippet (specified by filepath, start_range, end_range)
 	 */
 	std::vector<std::string> get_snippet() const;
+
+	friend std::ostream& operator<<(std::ostream& os, const Snippet& ci);
 };
 
 struct CodeCloneInfo {

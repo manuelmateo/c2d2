@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
 	auto dimensionality = args.get<int>("-dim");
 
 	if (!scan_dir) {
-		std::print("no scan directory!");
+		std::println("no scan directory!");
 		return 1;
 	}
 

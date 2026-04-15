@@ -12,26 +12,82 @@
 #include <string_view>
 #include <vector>
 
-std::vector<Snippet> detect_method_snippets(std::string_view file_dir) {
+std::vector<Snippet> get_methods_from_file(std::filesystem::path p) {
+	std::regex r;
 	try {
-		// Source - https://stackoverflow.com/a/847507
-		// Posted by Georgios Gousios
-		// Retrieved 2026-04-14, License - CC BY-SA 2.5
-		const auto r = std::regex(
-			"(public|protected|private|static|\\s) "
-			"+[\\w\\<\\>\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
+		// Source - https://stackoverflow.com/a/52996479
+		// Posted by LarsH
+		// Retrieved 2026-04-15, License - CC BY-SA 4.0
+
+		r = std::regex("^[ \t]*(([A-Za-z_][A-Za-z_0-9]*[ "
+					   "\t]+)+[A-Za-z_][A-Za-z_0-9]*[ \t]*\\([^;]*)$");
 
 	} catch (const std::regex_error& e) {
 		std::cout << "couldn't make regex!" << e.what() << '\n';
 		assert(false);
 	}
 
-	for (const auto& ent : std::filesystem::directory_iterator(file_dir)) {
-		ent.is_directory();
-		std::cout << ent.path() << '\n';
+	std::ifstream file(p);
+
+	std::vector<Snippet> result;
+
+	if (!file.good()) {
+		return result;
 	}
 
-	return std::vector<Snippet>{};
+	std::string line;
+	Snippet current(p.string(), -1, -1);
+
+	int line_num = 1;
+	int brace_count = 0;
+
+	bool in_function = false;
+	bool first_brace_encountered = false;
+	while (std::getline(file, line)) {
+		std::smatch m;
+		if (std::regex_match(line, m, r)) {
+			// std::cout << "here: " << line_num << '\n';
+			current.start_range = line_num;
+			in_function = true;
+		}
+		if (in_function) {
+			if (line.contains("{")) {
+				brace_count++;
+				first_brace_encountered = true;
+			}
+			if (line.contains("}")) {
+				brace_count--;
+			}
+
+			if (first_brace_encountered && brace_count == 0) {
+				current.end_range = line_num;
+				result.push_back(current);
+				current = Snippet(p.string(), -1, -1);
+				first_brace_encountered = false;
+				in_function = false;
+			}
+		}
+		line_num++;
+	}
+	return result;
+}
+
+std::vector<Snippet> detect_method_snippets(std::string_view file_dir) {
+
+	std::vector<Snippet> results;
+
+	for (const auto& ent : std::filesystem::directory_iterator(file_dir)) {
+
+		std::vector<Snippet> r2;
+		if (ent.is_directory()) {
+			r2 = detect_method_snippets(ent.path().string());
+		} else {
+			r2 = get_methods_from_file(ent.path());
+		}
+
+		results.insert(results.end(), r2.begin(), r2.end());
+	}
+	return results;
 }
 
 std::vector<std::string> Snippet::get_snippet() const {
@@ -59,6 +115,11 @@ std::vector<std::string> Snippet::get_snippet() const {
 		lines.push_back(s);
 	}
 	return lines;
+}
+
+std::ostream& operator<<(std::ostream& os, const Snippet& ci) {
+	os << ci.filepath << ": [" << ci.start_range << ", " << ci.end_range << "]";
+	return os;
 }
 
 std::ostream& operator<<(std::ostream& os, const CodeCloneInfo& ci) {
