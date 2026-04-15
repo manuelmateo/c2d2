@@ -1,0 +1,3 @@
+int getSquare(int size) {
+	return size * size;
+}
