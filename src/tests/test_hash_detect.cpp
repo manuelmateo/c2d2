@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     std::vector<std::string> tokens1 = normalize(file1);
 
     // Step 2: parse functions
-    std::vector<Function> funcs1 = parseFunctions(tokens1);
+    std::vector<Function> funcs1 = parse_functions(tokens1);
 
     // Step 3: detect clones within the same file
     int count = detectType1Clones(funcs1);
