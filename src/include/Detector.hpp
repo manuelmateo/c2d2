@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CodeCloneInfo.hpp"
 #include "Parser.hpp"
 #include "Snippets.hpp"
 

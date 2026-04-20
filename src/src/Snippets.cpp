@@ -8,6 +8,7 @@
 #include <iostream>
 #include <limits>
 #include <regex>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -122,24 +123,25 @@ std::ostream& operator<<(std::ostream& os, const Snippet& ci) {
 	return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const CodeCloneInfo& ci) {
-	for (const auto& [key, val] : ci.clones) {
+bool Snippet::operator<(const Snippet& rhs) const {
 
-		if (val.size() == 0) {
-			continue;
-		}
+	Snippet::Hash hasher;
 
-		auto current_snippet = ci.snippets[key];
+	return hasher(*this) < hasher(rhs);
+}
 
-		os << "snippet in file " << current_snippet.filepath << " ("
-		   << current_snippet.start_range << "," << current_snippet.end_range
-		   << ") has " << val.size() << " clone(s):\n";
-
-		for (auto& c : val) {
-			os << '\t' << c.filepath << " (" << c.start_range << ','
-			   << c.end_range << ")\n";
-		}
+bool Snippet::operator==(const Snippet& other) const {
+	if (this->filepath == other.filepath &&
+		this->start_range == other.start_range &&
+		this->end_range == other.end_range) {
+		return true;
 	}
+	return false;
+}
 
-	return os;
+std::size_t Snippet::Hash::operator()(const Snippet& s) const {
+	std::stringstream ss;
+	ss << s;
+
+	return std::hash<std::string>()(ss.str());
 }

@@ -2,3 +2,6 @@
 build
 .DS_Store
 test
+deps/nicad-*
+deps/Open-*
+deps/dude.jar

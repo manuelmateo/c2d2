@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CodeCloneInfo.hpp"
 #include "Snippets.hpp"
 #include "ollama.hpp"
 

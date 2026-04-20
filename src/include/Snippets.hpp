@@ -5,7 +5,6 @@
 #include <ostream>
 #include <string>
 #include <string_view>
-#include <unordered_map>
 #include <vector>
 
 /*
@@ -32,16 +31,15 @@ struct Snippet {
 	std::vector<std::string> get_snippet() const;
 
 	friend std::ostream& operator<<(std::ostream& os, const Snippet& ci);
-};
 
-struct CodeCloneInfo {
+	bool operator==(const Snippet& other) const;
 
-	std::vector<Snippet> snippets;
-	std::unordered_map<int, std::vector<Snippet>> clones;
+	bool operator<(const Snippet& rhs) const;
 
-	CodeCloneInfo(std::vector<Snippet> snippets) : snippets(snippets) {}
+	struct Hash {
 
-	friend std::ostream& operator<<(std::ostream& os, const CodeCloneInfo& ci);
+		std::size_t operator()(const Snippet& s) const;
+	};
 };
 
 /*
