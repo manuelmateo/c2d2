@@ -1,0 +1,12 @@
+private int test_function() {
+	int x = 				 10;
+	// here's comment 1
+	int y = 2;
+	int c = 20; /* start multiline
+
+
+	some text;
+	*/ int d = 50;
+
+	return 0;
+}

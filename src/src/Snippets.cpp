@@ -1,11 +1,14 @@
 #include "../include/Snippets.hpp"
 
+#include <algorithm>
 #include <cassert>
+#include <cctype>
 #include <filesystem>
 #include <fstream>
 #include <ios>
 #include <iosfwd>
 #include <iostream>
+#include <iterator>
 #include <limits>
 #include <regex>
 #include <sstream>
@@ -110,9 +113,56 @@ std::vector<std::string> Snippet::get_snippet() const {
 		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	}
 
+	bool in_multiline_comment = false;
+
 	for (int i = 0; i < num_lines; i++) {
+		std::string _s;
 		std::string s;
-		std::getline(file, s);
+		std::getline(file, _s);
+
+		// https://stackoverflow.com/questions/1798112/removing-leading-and-trailing-spaces-from-a-string
+		const auto str_begin = _s.find_first_not_of("\t \n");
+		if (str_begin == std::string::npos) {
+			continue; // empty line
+		}
+		const auto str_end = _s.find_last_not_of("\t \n");
+
+		_s = _s.substr(str_begin, (str_end - str_begin) + 1);
+
+		// normalize spaces (eg. "a			b" -> "a b")
+		// beautiful oneliner from:
+		// https://stackoverflow.com/questions/35301432/remove-extra-white-spaces-in-c
+		std::unique_copy(
+			_s.begin(), _s.end(), std::back_insert_iterator<std::string>(s),
+			[](char a, char b) { return ::isspace(a) && ::isspace(b); });
+
+		auto single_line_comment_pos = s.find("//");
+		if (single_line_comment_pos != std::string::npos) {
+			// erase comment to end
+			s.erase(single_line_comment_pos, std::string::npos);
+		}
+
+		auto multi_line_start_pos = s.find("/*");
+		if (multi_line_start_pos != std::string::npos) {
+			s.erase(multi_line_start_pos, std::string::npos);
+			in_multiline_comment = true;
+		}
+
+		if (in_multiline_comment) {
+			auto multi_line_end_pos = s.find("*/");
+
+			if (multi_line_end_pos == std::string::npos) {
+				continue;
+			}
+			s.erase(0, multi_line_end_pos + 2);
+			in_multiline_comment = false;
+		}
+
+		// removing anything empty
+		if (s.empty()) {
+			continue;
+		}
+
 		lines.push_back(s);
 	}
 	return lines;
