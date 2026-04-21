@@ -23,13 +23,11 @@ std::ostream& operator<<(std::ostream& os, const CodeCloneInfo& ci) {
 			seen_snippets.insert(current_snippets);
 		}
 
-		os << "snippet in file " << current_snippet.filepath << " ("
-		   << current_snippet.start_range << "," << current_snippet.end_range
-		   << ") has " << val.size() << " clone(s):\n";
+		os << "snippet in file " << current_snippet << " has " << val.size()
+		   << " clone(s):\n";
 
 		for (auto& c : val) {
-			os << '\t' << c.filepath << " (" << c.start_range << ','
-			   << c.end_range << ")\n";
+			os << '\t' << c << '\n';
 		}
 	}
 
