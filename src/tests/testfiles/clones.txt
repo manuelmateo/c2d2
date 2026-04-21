@@ -1,0 +1,55 @@
+Type-1 public static String toString(final Annotation a) method:
+    1. Same
+    2. Remove //what
+    3. Adds //Test
+    4. Adds whitespace
+    5. Adds //Test
+    6. Adds //Added Comment
+    7. Adds //hello
+    8. Adds //Whitespace; adds whitespace
+    9. Adds //Whitespace; adds more whitespace
+    10. Adds //Comment; adds whitespace
+    11. Adds //what is this code
+    12. Adds /* Hello this is code comment*/; adds /* Multi-Line Comment */
+
+Type-2  public static int hashCode(final Annotation a) method:
+    1. Same
+    2. Changes result to res (applies for the rest of the clones as well (except 4))
+    3. Changes a to a1
+    4. Changes res to to res1
+    5. Changes m to m1
+    6. Changes value to val
+    7. Changes type to type1
+    8. Changes method name to hasedCode
+    9. Changes ex to exception
+    10. Changes method anme to hashingCode
+
+Type-3 private static boolean memberEquals(final Class<?> type, final Object o1, final Object o2) method:
+    1. Same
+    2. Changes to "o2 != null"
+    3. Adds print statement for o2: 
+        system.out.println(o1);
+    4. Adds 
+        if(o2 == o1) {
+            return true;
+        }
+    5. Removes 
+        if (o1 == null || o2 == null) {
+            return false;
+        }
+    6. Changes return statement to
+        if (o1.equals(o2))
+            return true;
+    7. Adds two print statements for o1 and o2 correspondingly: 
+        system.out.println(o2);
+        system.out.println(o1);
+    8. Changes return statement to:
+        return o1 + o2;
+    9. Gets rid of:
+        if (type.isArray()) {
+            return arrayMemberEquals(type.getComponentType(), o1, o2);
+        }
+    10. Adds:
+        if (o1 == null && o2 = null) {
+            return false;
+        }
