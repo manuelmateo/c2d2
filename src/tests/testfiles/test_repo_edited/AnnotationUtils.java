@@ -538,7 +538,7 @@ public class AnnotationUtils {
     public AnnotationUtils() {
         // empty
     }
-}
+
     //#2
     public static int hashCode(final Annotation a) {
         int res = 0;
@@ -588,7 +588,7 @@ public class AnnotationUtils {
                 throw new UncheckedException(ex);
             }
         }
-        return res;
+        return res1;
     }
 
         public static int hashCode(final Annotation a) {
@@ -642,7 +642,7 @@ public class AnnotationUtils {
         return res;
     }
 
-        public static int hashCode(final Annotation a) {
+        public static int hashedCode(final Annotation a) {
         int res = 0;
         final Class<? extends Annotation> type = a.annotationType();
         for (final Method m : type.getDeclaredMethods()) {
@@ -808,7 +808,7 @@ public class AnnotationUtils {
         if (type.isAnnotation()) {
             return equals((Annotation) o1, (Annotation) o2);
         }
-        return o1.equals(o2);
+        return o1 + (o2);
     }
 
     //#9
@@ -833,7 +833,7 @@ public class AnnotationUtils {
             return false;
         }
 
-        if (o1 == null && o2 = null) {
+        if (o1 == null && o2 == null) {
             return false;
         }
         if (type.isArray()) {
@@ -845,3 +845,4 @@ public class AnnotationUtils {
 
         return o1.equals(o2);
     }
+}
