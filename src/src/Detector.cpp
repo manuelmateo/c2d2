@@ -35,7 +35,9 @@ CodeCloneInfo detectType1Clones(const std::vector<Function>& funcs,
 	// Compare each pair, using hashes to skip non-matching pairs early
 	for (size_t i = 0; i < funcs.size(); i++) {
 		std::vector<Snippet> current_clones;
-		for (size_t j = i + 1; j < funcs.size(); j++) {
+		for (size_t j = 0; j < funcs.size(); j++) {
+			if (i == j)
+				continue;
 			// Skip full comparison if hashes don't match
 			if (hashes[i] != hashes[j])
 				continue;
