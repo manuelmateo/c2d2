@@ -5,3 +5,6 @@ test
 deps/nicad-*
 deps/Open-*
 deps/dude.jar
+c2d2_output
+nicadclones
+tests/testfiles/bigcloneevalsample/*
