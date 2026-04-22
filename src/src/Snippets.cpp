@@ -40,7 +40,7 @@ std::vector<Snippet> get_partial_funcs_from_c_file(std::filesystem::path p) {
 		std::string function_name, file_path;
 		int line_num;
 		ss >> function_name >> line_num >> file_path;
-		res.push_back(Snippet(file_path, line_num, -1));
+		res.push_back(Snippet(file_path, line_num, -1, function_name));
 	}
 
 	std::filesystem::remove("out_tags");

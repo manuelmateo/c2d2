@@ -20,9 +20,16 @@ struct Snippet {
 	std::string filepath;
 	int start_range;
 	int end_range;
+	std::string function_name;
 
 	Snippet(const std::string& filepath, int start_range, int end_range)
-		: filepath(filepath), start_range(start_range), end_range(end_range) {}
+		: filepath(filepath), start_range(start_range), end_range(end_range),
+		  function_name{} {}
+
+	Snippet(const std::string& filepath, int start_range, int end_range,
+			const std::string& function_name)
+		: filepath(filepath), start_range(start_range), end_range(end_range),
+		  function_name(function_name) {}
 
 	/*
 	 * gets the actual snippet text
