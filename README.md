@@ -7,6 +7,7 @@
 - `-scan-dir` - the directory to scan; tool fetches code clones from files in the given dir and any subdirs
 
 ## setup
+1. have `ctags` installed
 1. download [ollama](https://ollama.com/)
 2. download an embedding model
 3. compile project

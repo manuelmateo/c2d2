@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstddef>
+#include <exception>
 #include <numeric>
 #include <vector>
 
@@ -26,13 +27,24 @@ SimilarityDetect::operator()(const std::vector<Snippet>& snippets) {
 
 	// add all snippets to index
 	for (auto& s : snippets) {
-		auto text_as_lines = s.get_snippet();
-		auto text = std::accumulate(text_as_lines.begin(), text_as_lines.end(),
-									std::string{});
+		try {
+			auto text_as_lines = s.get_snippet();
+			auto text = std::accumulate(text_as_lines.begin(),
+										text_as_lines.end(), std::string{});
 
-		auto r = ollama::generate_embeddings(this->model_name, text).as_json();
-		auto embedding = r["embeddings"][0].get<std::vector<float>>();
-		embeddings.push_back(embedding);
+			auto r =
+				ollama::generate_embeddings(this->model_name, text).as_json();
+			auto embedding = r["embeddings"][0].get<std::vector<float>>();
+			embeddings.push_back(embedding);
+
+		} catch (std::exception e) {
+			std::cerr << s << '\n';
+			auto lines = s.get_snippet();
+			for (const auto& l : lines) {
+				std::cerr << l << '\n';
+			}
+			std::cerr << e.what() << '\n';
+		}
 	}
 
 	CodeCloneInfo clones(snippets);

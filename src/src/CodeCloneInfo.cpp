@@ -3,6 +3,7 @@
 #include <set>
 
 std::ostream& operator<<(std::ostream& os, const CodeCloneInfo& ci) {
+	int total_clones = 0;
 	std::set<std::set<Snippet>> seen_snippets;
 
 	for (const auto& [key, val] : ci.clones) {
@@ -23,6 +24,8 @@ std::ostream& operator<<(std::ostream& os, const CodeCloneInfo& ci) {
 			seen_snippets.insert(current_snippets);
 		}
 
+		total_clones += current_snippets.size();
+
 		os << "snippet in file " << current_snippet << " has " << val.size()
 		   << " clone(s):\n";
 
@@ -30,6 +33,7 @@ std::ostream& operator<<(std::ostream& os, const CodeCloneInfo& ci) {
 			os << '\t' << c << '\n';
 		}
 	}
+	std::cout << "# of clones found: " << total_clones << '\n';
 
 	return os;
 }
