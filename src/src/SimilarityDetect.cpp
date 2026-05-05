@@ -25,6 +25,11 @@ SimilarityDetect::operator()(const std::vector<Snippet>& snippets) {
 	std::vector<std::vector<float>> embeddings;
 	embeddings.reserve(snippets.size() * this->dimensionality);
 
+	if (!ollama::is_running()) {
+		std::cerr << "error; ollama isn't running!\n";
+		return CodeCloneInfo{snippets};
+	}
+
 	// add all snippets to index
 	for (auto& s : snippets) {
 		try {
@@ -40,9 +45,6 @@ SimilarityDetect::operator()(const std::vector<Snippet>& snippets) {
 		} catch (std::exception e) {
 			std::cerr << s << '\n';
 			auto lines = s.get_snippet();
-			for (const auto& l : lines) {
-				std::cerr << l << '\n';
-			}
 			std::cerr << e.what() << '\n';
 		}
 	}
@@ -54,8 +56,9 @@ SimilarityDetect::operator()(const std::vector<Snippet>& snippets) {
 		for (size_t j = 0; j < embeddings.size(); j++) {
 			if (i == j)
 				continue;
-			if (SimilarityDetect::cosine_similarity(
-					embeddings[i], embeddings[j]) > this->threshold) {
+			auto similarity = SimilarityDetect::cosine_similarity(
+				embeddings[i], embeddings[j]);
+			if (similarity >= this->threshold) {
 				current_clones.push_back(snippets[j]);
 			}
 		}

@@ -158,6 +158,12 @@ std::vector<Snippet> detect_method_snippets(std::string_view file_dir) {
 
 	std::vector<Snippet> results;
 
+	if (!std::filesystem::is_directory(file_dir)) {
+		auto r2 = get_methods_from_file(file_dir);
+		results.insert(results.end(), r2.begin(), r2.end());
+		return results;
+	}
+
 	for (const auto& ent : std::filesystem::directory_iterator(file_dir)) {
 
 		std::vector<Snippet> r2;
@@ -226,7 +232,7 @@ std::vector<std::string> Snippet::get_snippet() const {
 
 		if (multi_line_start_pos != std::string::npos &&
 			multi_line_end_pos != std::string::npos) {
-			s.erase(multi_line_start_pos, multi_line_end_pos);
+			s.erase(multi_line_start_pos, multi_line_end_pos + 2);
 		} else {
 			if (multi_line_start_pos != std::string::npos) {
 				s.erase(multi_line_start_pos, std::string::npos);
