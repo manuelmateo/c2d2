@@ -17,7 +17,7 @@ class SimilarityDetect {
 
   public:
 	SimilarityDetect(int dimensionality, std::string_view model_name,
-					 float threshold = 0.8)
+					 float threshold = 0.9)
 		: dimensionality(dimensionality), model_name(model_name),
 		  threshold(threshold) {}
 

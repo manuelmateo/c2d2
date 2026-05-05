@@ -1,3 +1,6 @@
+#include <filesystem>
+#include <fstream>
+#include <optional>
 #include <print>
 #include <string_view>
 
@@ -48,24 +51,48 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 
+	std::optional<SimilarityDetect> sd;
+
 	if (!threshold) {
-		SimilarityDetect sd(*dimensionality, *embedding_model);
-		auto ci_similarity_detect = sd(snippets);
-		ci_similarity_detect.set_format(format);
-		std::cout << "similarity based:" << '\n';
-		std::cout << ci_similarity_detect << '\n';
+		sd = SimilarityDetect(*dimensionality, *embedding_model);
 	} else {
-		SimilarityDetect sd(*dimensionality, *embedding_model, *threshold);
-		auto ci_similarity_detect = sd(snippets);
-		ci_similarity_detect.set_format(format);
-		std::cout << "similarity based:" << '\n';
-		std::cout << ci_similarity_detect << '\n';
+		sd = SimilarityDetect(*dimensionality, *embedding_model, *threshold);
 	}
+
+	auto ci_similarity_detect = (*sd)(snippets);
+	ci_similarity_detect.set_format(format);
 
 	auto funcs = normalize(snippets);
 	auto ci_hash_based = detectType1Clones(funcs, snippets);
 	ci_hash_based.set_format(format);
 
+	std::cout << "similarity based:" << '\n';
+	std::cout << ci_similarity_detect << '\n';
 	std::cout << "hash based:" << '\n';
 	std::cout << ci_hash_based << '\n';
+
+	auto default_out_dir = std::filesystem::path("c2d2-output");
+
+	auto specific_out_dir =
+		default_out_dir / std::filesystem::path(*scan_dir).filename();
+
+	auto similarity_output_file_path = specific_out_dir / "sim_results";
+	auto hash_output_file_path = specific_out_dir / "hash_results";
+
+	auto res = std::filesystem::create_directories(
+		similarity_output_file_path.parent_path());
+
+	if (!res) {
+		std::cerr << "couldn't make paths!: "
+				  << similarity_output_file_path.parent_path() << '\n';
+		return 1;
+	}
+
+	std::ofstream similarity_output_file(similarity_output_file_path);
+
+	similarity_output_file << ci_similarity_detect;
+
+	std::ofstream hash_output_file(hash_output_file_path);
+
+	hash_output_file << ci_hash_based;
 }

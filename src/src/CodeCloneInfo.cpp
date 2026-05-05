@@ -78,9 +78,45 @@ std::ostream& pair_format(std::ostream& os, const CodeCloneInfo& ci) {
 	return os;
 }
 
+std::ostream& simple_pair_format(std::ostream& os, const CodeCloneInfo& ci) {
+
+	std::set<std::set<Snippet>> seen_pairs;
+
+	for (const auto& [key, val] : ci.clones) {
+
+		if (val.size() == 0) {
+			continue;
+		}
+
+		auto current_snippet = ci.snippets[key];
+
+		std::set<Snippet> current_snippets(val.begin(), val.end());
+
+		current_snippets.insert(current_snippet);
+
+		for (const auto& c1 : current_snippets) {
+			for (const auto& c2 : current_snippets) {
+				if (c1 == c2)
+					continue;
+				auto pair = std::set{c1, c2};
+
+				if (seen_pairs.contains(pair))
+					continue;
+
+				seen_pairs.insert(pair);
+
+				os << c1 << "|" << c2 << '\n';
+			}
+		}
+	}
+	return os;
+}
+
 std::ostream& operator<<(std::ostream& os, const CodeCloneInfo& ci) {
 	if (ci.format == "pairs") {
 		return pair_format(os, ci);
+	} else if (ci.format == "simple-pairs") {
+		return simple_pair_format(os, ci);
 	}
 	return default_format(os, ci);
 }
